@@ -1,3 +1,3 @@
 # CS_225_Programming_Assignment-
 
-## haha
+# This repository contains two programming assignments of course CS 225
