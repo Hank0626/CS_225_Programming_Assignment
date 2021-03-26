@@ -8,17 +8,14 @@
 #include <stdio.h>
 #include <iostream>
 #include <cstdlib>
-#include "fifo.h"
+#include "person.h"
 using std::cout;
 using std::cin;
 
-template<class T> fifo<T>::fifo(int size)
-{
+template<class T> fifo<T>::fifo(int size) {
     maxsize = size;
-    if (size < 10)
-        minsize = size;
-    else
-        minsize = 10;
+    if (size < 10) minsize = size;
+    else minsize = 10;
     numitems = 0;
     first = 0;
     last = -1;
@@ -30,60 +27,47 @@ template<class T> fifo<T>::fifo(int size)
 //    delete[] *reprarray;
 //}
 
-template<class T> T &fifo<T>::operator[](int index)
-{
-    if ((1 <= index) && (index <= numitems))
-    {
+template<class T> T &fifo<T>::operator[](int index) {
+    if ((1 <= index) && (index <= numitems)) {
         int relindex = (index + first -1) % maxsize;
         return reprarray[relindex];
     }
-    else
-    {
+    else {
         cout << "Error: index " << index << " out of range.\n";
         exit(EXIT_FAILURE);
     }
 }
 
-template<class T> int fifo<T>::getlength(void)
-{
+template<class T> int fifo<T>::getlength(void) {
     return numitems;
 }
 
-template<class T> bool fifo<T>::isempty(void)
-{
-    if (numitems == 0)
-        return true;
-    else
-        return false;
+template<class T> bool fifo<T>::isempty(void) {
+    if (numitems == 0) return true;
+    else return false;
 }
 
-template<class T> T fifo<T>::front(void)
-{
+template<class T> T fifo<T>::front(void) {
     if (isempty() == false)
         return reprarray[first];
-    else
-    {
+    else {
         cout << "The queue is empty.\n";
         exit(EXIT_FAILURE);
     }
 }
 
-template<class T> T fifo<T>::back(void)
-{
-    if (isempty() == false)
-    {
+template<class T> T fifo<T>::back(void) {
+    if (isempty() == false) {
         int relindex = (first + numitems - 1) % maxsize;
         return reprarray[relindex];
     }
-    else
-    {
+    else {
         cout << "The queue is empty.\n";
         exit(EXIT_FAILURE);
     }
 }
 
-template<class T> void fifo<T>::pushback(T value)
-{
+template<class T> void fifo<T>::pushback(T value) {
     if (numitems == maxsize)
         allocate();
     last = ++last % maxsize;
@@ -92,30 +76,25 @@ template<class T> void fifo<T>::pushback(T value)
     return;
 }
 
-template<class T> T fifo<T>::popfront(void)
-{
+template<class T> T fifo<T>::popfront(void) {
     if ((numitems == maxsize / 4) && (maxsize > minsize))
         deallocate();
-    if (isempty() == false)
-    {
+    if (isempty() == false) {
         T frontelement = reprarray[first];
         first = ++first % maxsize;
         --numitems;
         return frontelement;
     }
-    else
-    {
+    else {
         cout << "The queue is empty.\n";
         exit(EXIT_FAILURE);
     }
 }
 
-template<class T> void fifo<T>::allocate(void)
-{
+template<class T> void fifo<T>::allocate(void) {
     int newsize = 2 * maxsize;
     T *newarray = new T[newsize];
-    for (int i = 0; i < numitems; ++i)
-    {
+    for (int i = 0; i < numitems; ++i) {
         int pos = (i + first) % maxsize;
         newarray[i] = reprarray[pos];
     }
@@ -127,12 +106,10 @@ template<class T> void fifo<T>::allocate(void)
     return;
 }
 
-template<class T> void fifo<T>::deallocate(void)
-{
+template<class T> void fifo<T>::deallocate(void) {
     int newsize = maxsize / 2;
     T *newarray = new T[newsize];
-    for (int i = 0; i < numitems; ++i)
-    {
+    for (int i = 0; i < numitems; ++i) {
         int pos = (i + first) % maxsize;
         newarray[i] = reprarray[pos];
     }
@@ -143,3 +120,5 @@ template<class T> void fifo<T>::deallocate(void)
     last = numitems -1;
     return;
 }
+
+

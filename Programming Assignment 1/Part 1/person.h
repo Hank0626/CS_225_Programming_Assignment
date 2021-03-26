@@ -1,9 +1,11 @@
 #ifndef person_h
 #define person_h
 
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
 using std::string;
+using std::vector;
+using std::pair;
 
 
 template<class T> class person;
@@ -12,19 +14,20 @@ template<class T> class fifo;
 template<class T> class registration;
 template<class T> class treatment;
 
-
+// Registration Class
+// Contains a person who propose a registration and the registration time
 template<class T> class registration
 {
     friend class person<T>;
 
 public: 
-    int day[];              // Ex: 20190906 :Setember 9th, 2019
-    int time[];             // Ex: 2105 : five pass nine pm
+    int day;              // Ex: 20190906 :Setember 9th, 2019
+    int time;             // Ex: 2105 : five pass nine pm
 };
 
 template<class T> class person
 {
-    frient class patient_queue<T>;
+    friend class patient_queue<T>;
 public:
     double find_priority(void);
     int wait;                           // 0: this person hasn't wait in queue; 1: this person has waited in line;
@@ -64,7 +67,7 @@ template<class T> class patient_queue
 
 public:
     patient_queue(){
-        this->patient_numbers = 0;
+        this -> patient_numbers = 0;
     };
 
     void add_patient(person<T> *person);            // each element in the queue is a pointer to person information
@@ -74,7 +77,7 @@ public:
     int registrate_number(void);
     int wait_number;
     int withdrawal_number = 0;
-    fifo< person<T>* > local;                          // using a queue to store local patient information
+    fifo <person<T>*> local;                          // using a queue to store local patient information
 
 };
 
@@ -104,7 +107,7 @@ private:
 template<class T> class treatment
 {
 public:
-    vector< pair<int,int,int,int> > day;
+    vector<int> day;
     string location;
 };
 

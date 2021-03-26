@@ -2,7 +2,6 @@
 #include"person.cpp"
 
 
-int main()
-{
+int main() {
     return 0 ;
 }
