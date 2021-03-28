@@ -47,6 +47,7 @@ int main()
             exit(1);
         default:
             cout<<"Wrong Choice"<<endl;
+            break;
         }
     }
     return 0;

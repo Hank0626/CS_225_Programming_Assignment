@@ -28,7 +28,6 @@ template <class T> class FibonacciHeap {
         void Insert(int value);
         void Fibonacci_link(node* x, node* y);
         node *Union(node* H1, node* H2);
-        void Display();
         node *Extract_Min();
         void Consolidate();
         int Decrease_key(int x, int k);
@@ -36,6 +35,7 @@ template <class T> class FibonacciHeap {
         void Cont_cut(node* y);
         node *Find(node* H1, int k);
         int Delete_key(int k);
+        void Display();
         void print(node* np, node* prev, int direction);
     private:
         int num_node;       // The number of node in the Fibonacc Heap

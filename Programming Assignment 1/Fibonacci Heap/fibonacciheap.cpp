@@ -72,32 +72,10 @@ template <class T> node* FibonacciHeap<T>::Union(node* H1, node* H2) {
     return H0;                                       
 }
 
-// Display for Fibonacci Heap
-// template <class T> void FibonacciHeap<T>::Display() {
-//     node* p = H;
-//     if (NULL == p) {
-//         cout << "The Fibonacci Heap is empty" << endl;
-//         return;
-//     }
-//     cout << "The roots node of Fibonacci Heap are:" << endl;
-//     do {
-//         cout << p -> n;
-//         p = p -> right;
-//         if (p != H) cout << "-->";   
-//     } while (p != H && NULL != p -> right);
-//     cout << endl;
-// }
-
 // Extract min of the Fibonacci Heap
 template <class T> node* FibonacciHeap<T>::Extract_Min() {
     if (NULL == H) return NULL;                 // If the Fibonacci Heap is empty, then return NULL
     node* p = H;                                // Use p to store the original pointer         
-            
-    if (H == H -> right && NULL == H -> child) {
-        H = NULL;
-        return p;
-    }
-    
     node* z = H;                                
     node* x = NULL;
     node* ptr;
@@ -111,16 +89,17 @@ template <class T> node* FibonacciHeap<T>::Extract_Min() {
             x -> right = H;
             x -> left = H -> left;
             H -> left = x;
-            if (x -> n < H -> n) H = x;
+            //if (x -> n < H -> n) H = x;
             x -> parent = NULL;
             x = np;
+            cout << x -> n << endl;
         } while (np != ptr);                     // Go through all the leave of the z
     }
-    (z -> left) -> right = z -> right;          // Extract the minimum
-    (z -> right) -> left = z -> left;
+    (H -> left) -> right = H -> right;          // Extract the minimum
+    (H -> right) -> left = H -> left;
     if (z == z -> right && NULL == z -> child) H = NULL; 
     else {
-        H = z -> right;
+        H = H -> right;
         Consolidate();
     }
     num_node--;                                 // Decrease the number of node by 1
@@ -131,11 +110,17 @@ template <class T> node* FibonacciHeap<T>::Extract_Min() {
 template <class T> void FibonacciHeap<T>::Consolidate() {
     int num = (log(num_node)) / (log(2)) + 1;       // Determine the max degree
     node* A[++num];                                 // Construct a series of node to store the degree
+    int dete = 0;
+    int det = 0;
     for (int i = 0; i < num; i++) A[i] = NULL;      // Initialize them to be 0
     int degree;                                     // Used to store the current degree of the node
     node* x = H;                                    // Set x to be the initial position of the H pointer
     node* y;                                        // Set y to store the A[degree]
     node* temp;                                     // Used to exchange x and y
+    do {
+        dete++;                                     // Calculate the origin number of roots
+        x = x -> right;
+    } while (x != H);
     do {
         degree = x -> degree;                       // Set the degree to the current node of degree
         while (NULL != A[degree]) {                 // If A[degree] is not NULL
@@ -146,14 +131,17 @@ template <class T> void FibonacciHeap<T>::Consolidate() {
                 y = temp;
             }
             if (y == H) H = x;                      
-            Fibonacci_link(y, x);                // Let the y to be the child of x
+            Fibonacci_link(y, x);                   // Let the y to be the child of x
+            dete--;                                 // Delete the number of roots
             if (x -> right == x) H = x; 
-            A[degree] = NULL;               
+            A[degree] = NULL;       
+            det--;                                  // Calculate the number in the array
             degree++;
         }
         A[degree] = x;
+        det++;                                      // Calculate the number in the array
         x = x -> right;
-    } while (x != H);                               // Go through all the root list
+    } while (dete != det);                               // Go through all the root list
     H = NULL;   
     for (int j = 0; j < num; j++) {                 // Link all the degree
         if (NULL != A[j]) {                      
@@ -291,3 +279,19 @@ template <class T> void FibonacciHeap<T>::Display() {
     } while (p != H);
     cout << endl;
 }
+
+// Display for Fibonacci Heap
+// template <class T> void FibonacciHeap<T>::Display() {
+//     node* p = H;
+//     if (NULL == p) {
+//         cout << "The Fibonacci Heap is empty" << endl;
+//         return;
+//     }
+//     cout << "The roots node of Fibonacci Heap are:" << endl;
+//     do {
+//         cout << p -> n;
+//         p = p -> right;
+//         if (p != H) cout << "-->";   
+//     } while (p != H && NULL != p -> right);
+//     cout << endl;
+// }
