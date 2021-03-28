@@ -18,15 +18,10 @@ template <class T> FibonacciHeap<T>::FibonacciHeap() {
     this -> H = np;                     // Let the node H in the heap to be null at first
 }
 
-// Create Node
-template <class T> node* FibonacciHeap<T>::Create_node(int value) {
-    node* x = new node;                 // Creat a new node x
-    x -> n = value;                     // Set the value of x to be the input
-    return x;                        
-}
-
 // Inseert Node
-template <class T> void FibonacciHeap<T>::Insert(node* x) {
+template <class T> void FibonacciHeap<T>::Insert(int value) {
+    node* x = new node; 
+    x -> n = value;
     x -> degree = 0;                      // Initialize the information of the node x
     x -> parent = NULL;
     x -> child = NULL;
@@ -78,54 +73,64 @@ template <class T> node* FibonacciHeap<T>::Union(node* H1, node* H2) {
 }
 
 // Display for Fibonacci Heap
-template <class T> void FibonacciHeap<T>::Display() {
-    node* p = H;
-    if (NULL == p) {
-        cout << "The Fibonacci Heap is empty" << endl;
-        return;
-    }
-    cout << "The roots node of Fibonacci Heap are:" << endl;
-    do {
-        cout << p -> n;
-        p = p -> right;
-        if (p != H) cout << "-->";   
-    } while (p != H && NULL != p -> right);
-    cout << endl;
-}
+// template <class T> void FibonacciHeap<T>::Display() {
+//     node* p = H;
+//     if (NULL == p) {
+//         cout << "The Fibonacci Heap is empty" << endl;
+//         return;
+//     }
+//     cout << "The roots node of Fibonacci Heap are:" << endl;
+//     do {
+//         cout << p -> n;
+//         p = p -> right;
+//         if (p != H) cout << "-->";   
+//     } while (p != H && NULL != p -> right);
+//     cout << endl;
+// }
 
 // Extract min of the Fibonacci Heap
 template <class T> node* FibonacciHeap<T>::Extract_Min() {
     if (NULL == H) return NULL;                 // If the Fibonacci Heap is empty, then return NULL
-    node* p = H;                                // Use p to store the original pointer                  
+    node* p = H;                                // Use p to store the original pointer         
+            
+    if (H == H -> right && NULL == H -> child) {
+        H = NULL;
+        return p;
+    }
+    
     node* z = H;                                
     node* x = NULL;
     node* ptr;
+    node* np;
     if (NULL != z -> child) x = z -> child;     // Let x to be the child of the z (minimum node)
     if (NULL != x) {
         ptr = x;                      
         do {
-            x = x -> right;
+            np = x -> right;
             (H -> left) -> right = x;           // Link x to the left of the minimum pointer  
             x -> right = H;
             x -> left = H -> left;
             H -> left = x;
             if (x -> n < H -> n) H = x;
             x -> parent = NULL;
-        } while (x != ptr);                     // Go through all the leave of the z
+            x = np;
+        } while (np != ptr);                     // Go through all the leave of the z
     }
-    ptr = H -> right;
-    (H -> left) -> right = H -> right;          // Extract the minimum
-    (H -> right) -> left = H -> left;
-    H = ptr;                                    // Set H to be the next of the extracted node
-    Consolidate();
+    (z -> left) -> right = z -> right;          // Extract the minimum
+    (z -> right) -> left = z -> left;
+    if (z == z -> right && NULL == z -> child) H = NULL; 
+    else {
+        H = z -> right;
+        Consolidate();
+    }
     num_node--;                                 // Decrease the number of node by 1
     return p;
 }
 
 // Consolidation operation for Fibonacci Heap
 template <class T> void FibonacciHeap<T>::Consolidate() {
-    int num = (log(num_node)) / (log(2));           // Determine the max degree
-    node* A[num++];                                   // Construct a series of node to store the degree
+    int num = (log(num_node)) / (log(2)) + 1;       // Determine the max degree
+    node* A[++num];                                 // Construct a series of node to store the degree
     for (int i = 0; i < num; i++) A[i] = NULL;      // Initialize them to be 0
     int degree;                                     // Used to store the current degree of the node
     node* x = H;                                    // Set x to be the initial position of the H pointer
@@ -224,32 +229,32 @@ template <class T> void FibonacciHeap<T>::Cont_cut(node* y) {
 
 // Find operation for Fibonacci Heap
 template <class T> node* FibonacciHeap<T>::Find(node* H1, int k) {
-    node* x = H1;                                    // Set the new x equals to H 
-    x -> find = true;                                // Set x -> C equals to Y
-    node* p = NULL;                                  // Set a new node to be NULL
-    if (x -> n == k) {                               // If x equals to k
-        p = x;                                       // Set p equals to x
-        x -> find = false;                           // Let x -> C equals to N
-        return p;                                    // Return the pointer
+    node* p = NULL;
+    node* q = NULL;
+    H1 -> find = true;                                // Set x -> C equals to Y
+    if (H1 -> n == k) {                               // If x equals to k
+        H1 -> find = false;                           // Let x -> C equals to N
+        return H1;                                    // Return the pointer
     }
-    if (NULL == p) {                                 // If the value in x is not equals to k
-        if (NULL != x -> child) {
-            p = Find(x -> child, k); 
-            if (NULL != p) return p;
+    else {                                 // If the value in x is not equals to k
+        if (NULL != H1 -> child) {
+            p = Find(H1 -> child, k); 
         }
-        if (((x -> right) -> find) == false) {
-            p = Find(x -> right, k);            // Find the right of x
-            if (NULL != p) return p;
+        if (((H1 -> right) -> find) == false) {
+            q = Find(H1 -> right, k);            // Find the right of x
         }
     }
-    x -> find = false;
-    return p;
+    H1 -> find = false;
+    if (NULL != p) return p;
+    else if (NULL != q) return q;
+    else return NULL; 
 }
 
 // Delete operation for Fibonacci Heap
 template <class T> int FibonacciHeap<T>::Delete_key(int k) {             
     node* np = NULL;
-    if (Decrease_key(k, numeric_limits<T>::min())) np = Extract_Min();  
+    int dete = Decrease_key(k, numeric_limits<T>::min());
+    if (dete == 1) np = Extract_Min();  
     if (NULL != np) {
         cout << "Key Deleted" << endl;
         return 1;
@@ -259,5 +264,30 @@ template <class T> int FibonacciHeap<T>::Delete_key(int k) {
 }
 
 
+template <class T> void FibonacciHeap<T>::print(node* np, node* prev, int direction) {
+    node* start = np;
+    if (NULL == np) return;
+    do {
+    if (direction == 1) cout << np -> n << "(" << np -> degree << ") is " << prev -> n << "'s child" << endl;
+    else cout << np -> n << "(" << np -> degree << ") is " << prev -> n << "'s next" << endl;
+    if (NULL != np -> child) print(np -> child, np, 1);
+    prev = np;
+    np = np -> right;
+    direction = 2;
+    } while(np != start);
+}
 
-
+template <class T> void FibonacciHeap<T>::Display() {
+    int i = 0;
+    node* p;
+    if (NULL == H) return ;
+    p = H;
+    do {
+        i++;
+        cout << "#########################" << endl;
+        cout << i << ". " << p -> n << "(" << p -> degree << ") is root" << endl;
+        print(p -> child, p, 1);
+        p = p -> right;
+    } while (p != H);
+    cout << endl;
+}

@@ -9,25 +9,20 @@ int main()
 {
     int m, l;
     FibonacciHeap<int> fh;
-    node* p;
     while (true) {
-        cout << "----------------------------" << endl;
-        cout << "Operations on Binomial heap" << endl;
-        cout << "----------------------------" << endl;
-        cout << "1)Insert Element in the heap" << endl;
-        cout << "2)Extract Minimum key node" << endl;
-        cout << "3)Decrease key of a node" << endl;
-        cout << "4)Delete a node" << endl;
-        cout << "5)Display Heap" << endl;
-        cout << "6)Exit" << endl;
+        cout << "1 Insert          ";
+        cout << "2 Extract Min" << endl;
+        cout << "3 Decrease key    ";
+        cout << "4 Delete" << endl;
+        cout << "5 Display Heap    ";
+        cout << "6 Exit" << endl;
         cout << "Enter Your Choice: ";
         cin >> l;
         switch(l) {
         case 1:
             cout << "Enter the element to be inserted: ";
             cin >> m;
-            p = fh.Create_node(m);
-            fh.Insert(p);
+            fh.Insert(m);
             break;
         case 2:
             fh.Extract_Min();

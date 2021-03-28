@@ -25,8 +25,7 @@ template <class T> class FibonacciHeap {
     public:
         // Below is basic operation for the Fibonacci Heap
         FibonacciHeap();                
-        node *Create_node(int value);
-        void Insert(node* x);
+        void Insert(int value);
         void Fibonacci_link(node* x, node* y);
         node *Union(node* H1, node* H2);
         void Display();
@@ -37,6 +36,7 @@ template <class T> class FibonacciHeap {
         void Cont_cut(node* y);
         node *Find(node* H1, int k);
         int Delete_key(int k);
+        void print(node* np, node* prev, int direction);
     private:
         int num_node;       // The number of node in the Fibonacc Heap
         node *H;            // The minimum pointer of the whole Fibonacci Heap
