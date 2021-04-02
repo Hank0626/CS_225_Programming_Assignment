@@ -1,6 +1,8 @@
 #ifndef person_h
 #define person_h
 
+#include "../report/report.h"
+
 #include <string>
 #include <vector>
 using std::string;
@@ -12,7 +14,14 @@ template<class T> class person;
 template<class T> class patient_queue;
 template<class T> class fifo;
 template<class T> class registration;
-template<class T> class treatment;
+class Treatment
+{
+public:
+    vector<int> day;
+    string location;
+};
+
+
 
 // Registration Class
 // Contains a person who propose a registration and the registration time
@@ -28,11 +37,12 @@ public:
 template<class T> class person
 {
     friend class patient_queue<T>;
+    friend class Report;
 public:
     double find_priority(void);
     int wait;                           // 0: this person hasn't wait in queue; 1: this person has waited in line;
     vector<int> deadline;               // EX: 20190906: setember 9th, 2019; it will be empty if no has letter been submitted 
-    treatment<T> treatment;
+    Treatment treatment;
     void set_name(string name);
     void set_email(string email);
     void profess(int pro);
@@ -46,7 +56,6 @@ public:
     int send_withdrawal(void);
     int check_registration(void);
 
-private:
     int identification;
     string name;
     string email;
@@ -59,6 +68,7 @@ private:
     int withdrawal = 0;                     // 0: no withdrawal record; 1: has withdrawal record
     int letter = 0;                         // 0: no letter has been subitted; 1: a letter has been submitted
     int regist = 0;                     // 0: not send registration; 1: have sent a registration
+    int treated = 0;                    // 0: not been treated; 1: have been treated
 };
 
 template<class T> class patient_queue
@@ -103,13 +113,5 @@ private:
     void allocate(void);
     void deallocate(void);
 };
-
-template<class T> class treatment
-{
-public:
-    vector<int> day;
-    string location;
-};
-
 
 #endif
