@@ -28,10 +28,11 @@ bool Report::read_from_file(string filename, person<int> &p) {
     fin >> p.profession;
     fin >> p.birthday;
     fin >> p.risk_status;
-    fin >> p.appoint.day;
-    fin >> p.appoint.time;
+    fin >> p.appoint.day[8];
+    fin >> p.appoint.time[4];
     fin >> p.age_group;
     fin >> p.withdrawal;
+    fin >> p.deadline[8];
     fin >> p.letter;
     fin >> p.regist;
     fin >> p.treated;
@@ -54,10 +55,11 @@ bool Report::store_to_file(person<int> p) {
     fout << p.profession << "\n";
     fout << p.birthday << "\n";
     fout << p.risk_status << "\n";
-    fout << p.appoint.day << "\n";
-    fout << p.appoint.time << "\n";
+    fout << p.appoint.day[8] << "\n";
+    fout << p.appoint.time[4] << "\n";
     fout << p.age_group << "\n";
     fout << p.withdrawal << "\n";
+    fout << p.deadline[8] << "\n";
     fout << p.letter << "\n";
     fout << p.regist << "\n";
     fout << p.treated << "\n";

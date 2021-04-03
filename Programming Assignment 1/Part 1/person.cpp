@@ -123,6 +123,8 @@ template<class T> int person<T>::send_registration(int day[8], int time[4]) {
     (this -> appoint) -> day = day;
     (this -> appoint) -> time = time;
     this -> regist = 1;
+    this -> treated = 0;
+    this -> letter = 0;
     return this -> return_id();
 }
 
@@ -138,15 +140,15 @@ template<class T> void patient_queue<T>::add_patient(person<T> *person) {
     return;
 }
 
-template<class T> bool patient_queue<T>::find(int id) {
+template<class T> person<T>* patient_queue<T>::find(int id) {
     for(int i = 0; i < this -> patient_numbers; i++) {
         if(this -> local -> reprarray[i] -> return_id() == id) {
             cout << "this person is in this hospital" << endl;
-            return true;
+            return this->local->reprarray[i];
         }
     }
     cout << "this person is not in this hospital" << endl;
-    return false;
+    return NULL;
 }
 
 template<class T> void patient_queue<T>::check_number(void) {
@@ -164,3 +166,63 @@ template<class T> int patient_queue<T>::registrate_number(void) {
     return registrate;
 }
 
+template<class T> bool patient_queue<T>::withdrawal_update(int id, Report file)
+{
+    person<T>* now = new person<T>;
+    now = this->find(id);
+    if(now == NULL){
+        cout << "this person isn't in the queue" << endl;
+        return false;
+    }else{
+        now->send_withdrawal();
+        file.store_to_file(*now);
+        return true;
+    }
+    
+}
+
+template<class T> bool patient_queue<T>::regist_update(int day[8], int time[4], int id, Report file)
+{
+    person<T>* now = new person<T>;
+    now = this->find(id);
+    if(now == NULL){
+        cout << "this person isn't in the queue" << endl;
+        return false;
+    }else{
+        now->send_registration(day,time);
+        file.store_to_file(*now);
+        return true;
+    }
+}
+
+template<class T> bool patient_queue<T>::letter_update(int day[8], int id, Report file)
+{
+    person<T>* now = new person<T>;
+    now = this->find(id);
+    if(now == NULL){
+        cout << "this person isn't in the queue" << endl;
+        return false;
+    }else if(now->regist == 0){
+        cout << "this person havn't send a registration" << endl;
+    }else{
+        now->deadline = day;
+        now->letter = 1;
+        file.store_to_file(*now);
+        return true;
+    }
+}
+
+template<class T> bool patient_queue<T>::treat_update(int id, Report file)
+{
+    person<T>* now = new person<T>;
+    now = this->find(id);
+    if(now == NULL){
+        cout << "this person isn't in the queue" << endl;
+        return false;
+    }else{
+        now -> treated = 1;
+        now -> regist = 0;
+        file.store_to_file(*now);
+        return true;
+    }
+}
