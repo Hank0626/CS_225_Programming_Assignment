@@ -93,7 +93,7 @@ template<class T> double person<T>::find_priority(void) {
     }else if(this -> risk_status != 3 && this -> withdrawal == 1){
         day += 14;
     }
-    priority += (year + month * 30 + day  + hour / 24 + minute / 1440) / 5000;
+    priority -= (year + month * 30 + day  + hour / 24 + minute / 1440) / 5000;
 
     this -> priority = priority;
     return priority;
