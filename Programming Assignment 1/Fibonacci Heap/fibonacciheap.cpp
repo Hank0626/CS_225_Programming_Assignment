@@ -92,7 +92,6 @@ template <class T> node* FibonacciHeap<T>::Extract_Min() {
             //if (x -> n < H -> n) H = x;
             x -> parent = NULL;
             x = np;
-            cout << x -> n << endl;
         } while (np != ptr);                     // Go through all the leave of the z
     }
     (H -> left) -> right = H -> right;          // Extract the minimum
@@ -117,11 +116,13 @@ template <class T> void FibonacciHeap<T>::Consolidate() {
     node* x = H;                                    // Set x to be the initial position of the H pointer
     node* y;                                        // Set y to store the A[degree]
     node* temp;                                     // Used to exchange x and y
+    node* ptr;
     do {
         dete++;                                     // Calculate the origin number of roots
         x = x -> right;
     } while (x != H);
     do {
+        ptr = x -> right;
         degree = x -> degree;                       // Set the degree to the current node of degree
         while (NULL != A[degree]) {                 // If A[degree] is not NULL
             y = A[degree];                          // y equals to A[degree]
@@ -129,18 +130,16 @@ template <class T> void FibonacciHeap<T>::Consolidate() {
                 temp = x;                           
                 x = y;
                 y = temp;
-            }
-            if (y == H) H = x;                      
+            }                 
             Fibonacci_link(y, x);                   // Let the y to be the child of x
             dete--;                                 // Delete the number of roots
-            if (x -> right == x) H = x; 
             A[degree] = NULL;       
             det--;                                  // Calculate the number in the array
             degree++;
         }
         A[degree] = x;
         det++;                                      // Calculate the number in the array
-        x = x -> right;
+        x = ptr;
     } while (dete != det);                               // Go through all the root list
     H = NULL;   
     for (int j = 0; j < num; j++) {                 // Link all the degree

@@ -7,8 +7,6 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <cmath>
-#include "report.h"
-#include "person.h"
 
 // Node Declaration
 struct node {
@@ -24,8 +22,6 @@ struct node {
 
 // Class Declaration
 template <class T> class FibonacciHeap {
-    friend class report<T>;
-    friend class person<T>;
     public:
         // Below is basic operation for the Fibonacci Heap
         FibonacciHeap();                
