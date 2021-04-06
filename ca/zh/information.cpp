@@ -40,6 +40,11 @@ template<class T> void person<T>::set_risk_status(int status) {
     return;
 }
 
+template<class T> void person<T>::profess(int pro) {
+    this -> profession = pro;
+    return;
+}
+
 template<class T> void person<T>::information(void) {
     cout << "the information of this patient is as below : " << endl;  
     cout << "name: " << this -> name << endl; 
@@ -64,7 +69,7 @@ template<class T> void person<T>::age(int age) {
     if (age > 35 && age <= 50) this -> age_group = 3;
     if (age > 50 && age <= 65) this -> age_group = 4;
     if (age > 65 && age <= 75) this -> age_group = 5;
-    if (age > 75) this -> age = 6;
+    if (age > 75) this -> age_group = 6;
     return;
 }
 
@@ -82,8 +87,8 @@ template<class T> double person<T>::find_priority(void) {
     priority += this -> age_group * 5;
     int tday; 
     int ttime;
-    tday = this -> appoint -> day;
-    ttime = this -> appoint -> time;
+    tday = (this -> appoint).day;
+    ttime = (this -> appoint).time;
     year = tday / 10000 - 2015;     // start from 2015, no registration will be earlier than 2015
     month = (tday - tday / 10000 * 10000) / 100 - 1;        // start from January
     day = (tday - tday / 100 * 100) - 1;          // start from 1st
@@ -98,6 +103,14 @@ template<class T> double person<T>::find_priority(void) {
 
 template<class T> int person<T>::return_id(void) {
     return this -> identification;
+}
+
+template<class T> string person<T>::return_name(void) {
+    return this -> name;
+}
+
+template<class T> int person<T>::return_bir(void) {
+    return this -> birthday;
 }
 
 template<class T> int person<T>::send_withdrawal(void) {
@@ -115,8 +128,8 @@ template<class T> int person<T>::send_registration(int day, int time) {
     if (this -> regist == 1){
         cout << "this person has already sent a registration" << endl;
     }
-    (this -> appoint) -> day = day;
-    (this -> appoint) -> time = time;
+    (this -> appoint).day = day;
+    (this -> appoint).time = time;
     this -> regist = 1;
     this -> treated = 0;
     this -> letter = 0;
@@ -131,16 +144,16 @@ template<class T> int person<T>::check_registration(void) {
 
 // ########################################## patient_queue<T> #########################################
 template<class T> void patient_queue<T>::add_patient(person<T> *person) {
-    this -> patient.pushback(person);
+    this -> local.pushback(person);
     this -> patient_numbers += 1;
     return;
 }
 
 template<class T> person<T>* patient_queue<T>::find(int id) {
     for (int i = 0; i < this -> patient_numbers; i++) {
-        if (this -> local -> reprarray[i] -> return_id() == id) {
+        if ((this -> local)[i] -> return_id() == id) {
             cout << "this person is in this hospital" << endl;
-            return this -> local -> reprarray[i];
+            return (this -> local)[i];
         }
     }
     cout << "this person is not in this hospital" << endl;
@@ -155,9 +168,19 @@ template<class T> void patient_queue<T>::check_number(void) {
 template<class T> int patient_queue<T>::registrate_number(void) {   
     int registrate = 0;
     for (int i = 0; i < this -> patient_numbers; i++) {
-        if ((this -> local) -> reprarray[i] -> check_registration() == 1) registrate++;
+        if ((this -> local)[i] -> check_registration() == 1) registrate++;
     }
     return registrate;
+}
+
+template<class T> void patient_queue<T>::display(void) {
+    for (int i = 1; i <= this -> patient_numbers; i++) {
+        cout << "----------Person " << i << "----------" << endl;
+        cout << "Name: " << ((this -> local)[i]) -> return_name() << endl;
+        cout << "ID: " << ((this -> local)[i]) -> return_id() << endl;
+        cout << "Bir: " << ((this -> local)[i]) -> return_bir() << endl;
+    }
+    return;
 }
 
 template<class T> bool patient_queue<T>::withdrawal_update(int id, Report file) {
@@ -222,6 +245,112 @@ template<class T> bool patient_queue<T>::treat_update(int id, Report file) {
     }
 }
 // ########################################## patient_queue<T> end #########################################
+
+// ########################################## fifo<T> #########################################
+template<class T> fifo<T>::fifo(int size) {
+    maxsize = size;
+    if (size < 10) minsize = size;
+    else minsize = 10;
+    numitems = 0;
+    first = 0;
+    last = -1;
+    reprarray = new T[maxsize];
+}
+
+template<class T> T &fifo<T>::operator[](int index) {
+    if ((1 <= index) && (index <= numitems)) {
+        int relindex = (index + first -1) % maxsize;
+        return reprarray[relindex];
+    }
+    else {
+        cout << "Error: index " << index << " out of range.\n";
+        exit(EXIT_FAILURE);
+    }
+}
+
+template<class T> int fifo<T>::getlength(void) {
+    return numitems;
+}
+
+template<class T> bool fifo<T>::isempty(void) {
+    if (numitems == 0) return true;
+    else return false;
+}
+
+template<class T> T fifo<T>::front(void) {
+    if (isempty() == false)
+        return reprarray[first];
+    else {
+        cout << "The queue is empty.\n";
+        exit(EXIT_FAILURE);
+    }
+}
+
+template<class T> T fifo<T>::back(void) {
+    if (isempty() == false) {
+        int relindex = (first + numitems - 1) % maxsize;
+        return reprarray[relindex];
+    }
+    else {
+        cout << "The queue is empty.\n";
+        exit(EXIT_FAILURE);
+    }
+}
+
+template<class T> void fifo<T>::pushback(T value) {
+    if (numitems == maxsize)
+        allocate();
+    last = ++last % maxsize;
+    reprarray[last] = value;
+    ++numitems;
+    return;
+}
+
+template<class T> T fifo<T>::popfront(void) {
+    if ((numitems == maxsize / 4) && (maxsize > minsize))
+        deallocate();
+    if (isempty() == false) {
+        T frontelement = reprarray[first];
+        first = ++first % maxsize;
+        --numitems;
+        return frontelement;
+    }
+    else {
+        cout << "The queue is empty.\n";
+        exit(EXIT_FAILURE);
+    }
+}
+
+template<class T> void fifo<T>::allocate(void) {
+    int newsize = 2 * maxsize;
+    T *newarray = new T[newsize];
+    for (int i = 0; i < numitems; ++i) {
+        int pos = (i + first) % maxsize;
+        newarray[i] = reprarray[pos];
+    }
+    delete[] reprarray;
+    reprarray = newarray;
+    maxsize = newsize;
+    first = 0;
+    last = numitems - 1;
+    return;
+}
+
+template<class T> void fifo<T>::deallocate(void) {
+    int newsize = maxsize / 2;
+    T *newarray = new T[newsize];
+    for (int i = 0; i < numitems; ++i) {
+        int pos = (i + first) % maxsize;
+        newarray[i] = reprarray[pos];
+    }
+    delete[] reprarray;
+    reprarray = newarray;
+    maxsize = newsize;
+    first = 0;
+    last = numitems - 1;
+    return;
+}
+// ########################################## fifo<T> end #########################################
 
 // ########################################## Report #########################################
 bool Report::read_from_file(string filename, person<int> &p) {

@@ -31,7 +31,6 @@ public:
 template<class T> class person {
     friend class Report;
 public:
-    double find_priority(void);
     int wait;                           // 0: this person hasn't wait in queue; 1: this person has waited in line;
     int deadline;               // EX: 20190906: setember 9th, 2019; it will be empty if no has letter been submitted 
     Treatment treatment;
@@ -45,8 +44,11 @@ public:
     void information(void);
     int send_registration(int day, int time);
     int return_id(void);
+    string return_name(void);
+    int return_bir(void);
     int send_withdrawal(void);
     int check_registration(void);
+    double find_priority(void);
     registration<T> appoint;
 private:
     string name;
@@ -76,6 +78,7 @@ public:
     int wait_number;
     int withdrawal_number = 0;
     fifo <person<T>*> local;                            // using a queue to store local patient information
+    void display(void);
 
     // Update information
     bool withdrawal_update(int id, Report file);
@@ -86,6 +89,7 @@ public:
 
 
 template<class T> class fifo {
+    friend class patient_queue<T>;
 public:
     fifo(int size = 10);
     T &operator[](int index);
@@ -100,7 +104,7 @@ private:
     int maxsize, minsize;
     int first, last;
     int numitems;
-    T **reprarray;
+    T *reprarray;
     void allocate(void);
     void deallocate(void);
 };
