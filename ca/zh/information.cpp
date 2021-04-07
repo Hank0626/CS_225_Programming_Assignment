@@ -132,8 +132,13 @@ template<class T> int person<T>::send_registration(int day, int time) {
     (this -> appoint).time = time;
     this -> regist = 1;
     this -> treated = 0;
-    this -> letter = 0;
     return this -> return_id();
+}
+
+template<class T> void person<T>::send_letter(int day) {
+    this -> letter = 1;
+    this -> deadline = day;
+    return;
 }
 
 template<class T> int person<T>::check_registration(void) {
@@ -374,14 +379,15 @@ bool Report::read_from_file(string filename, person<int> &p) {
     fin >> p.letter;
     fin >> p.regist;
     fin >> p.treated;
+    fin >> p.priority;
     fin.close();
     return true;
 }
 
-bool Report::store_to_file(person<int> p) {
+bool Report::store_to_file(person<int> p, string where) {
     string filename = to_string(p.identification);
     filename += ".txt";
-    ofstream fout("./database/"+filename, ios::trunc);
+    ofstream fout("./database/"+ where + "/" + filename, ios::trunc);
     if (!fout.is_open()) {
         cout << "cannot open: " + filename << endl;
         return false;
@@ -400,6 +406,7 @@ bool Report::store_to_file(person<int> p) {
     fout << p.letter << "\n";
     fout << p.regist << "\n";
     fout << p.treated << "\n";
+    fout << p.priority << "\n";
     fout.close();
     return true;
 }
@@ -434,7 +441,7 @@ void print_split_line() {
     printf("==============================================\n");
 }
 
-void Report::print_person(int i, vector<person<int>> report_list, bool wait_time) {
+void Report::print_person(int i, vector< person<int> > report_list, bool wait_time) {
     newline();
     cout << "name: " << report_list[i].name << endl;
     printf("profession category: %d\n", report_list[i].profession);
@@ -445,7 +452,7 @@ void Report::print_person(int i, vector<person<int>> report_list, bool wait_time
 }
 
 bool Report::_display_report(int timenow, int range, string sort_by, bool is_summary) {
-    vector<person<int>> report_list;
+    vector< person<int> > report_list;
     vector<string> filenames;
     GetFileNames("./database", filenames);
     for (int i = 0; i < filenames.size(); i++) {
