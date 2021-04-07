@@ -381,7 +381,7 @@ bool Report::read_from_file(string filename, person<int> &p) {
 bool Report::store_to_file(person<int> p) {
     string filename = to_string(p.identification);
     filename += ".txt";
-    ofstream fout(filename, ios::trunc);
+    ofstream fout("./database/"+filename, ios::trunc);
     if (!fout.is_open()) {
         cout << "cannot open: " + filename << endl;
         return false;
